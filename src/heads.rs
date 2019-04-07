@@ -1,36 +1,22 @@
 
+use crate::EscSequency;
 
-fontseg_escape! {
-	pub enum Empty {
-		#len		[1]
-		#write	["0", b"0";]
-	}
-	
-	pub enum Bold {
-		#len		[1]
-		#write	["1", b"1";]
-	}
-	
-	//Жирный
-	pub enum Underline {
-		#len		[1]
-		#write	["4", b"4";]
-	}
-	
-	//Подчёркнутый
-	pub enum Flashing {
-		#len		[1]
-		#write	["5", b"5";]
-	}
-	
-	pub enum InvertedColors {
-		#len		[1]
-		#write	["7", b"7";]
-	}
-	
-	pub enum Invisible {
-		#len		[1]
-		#write	["8", b"8";]
+pub trait HeadEscSequency: EscSequency {}
+
+
+escseq_data! {
+	HeadEscSequency {
+		pub Empty = "0";
+		//Жирный
+		pub Bold = "1";
+		
+		//Подчеркивание
+		pub Underline = "4";
+		
+		//мигающий
+		pub Flashing = "5";
+		pub InvertedColors = "7";
+		pub Invisible = "8";
 	}
 }
 

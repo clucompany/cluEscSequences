@@ -1,25 +1,24 @@
 
 #[macro_use]
-extern crate cluColor;
+extern crate cluEscSequency;
 
+use cluEscSequency::EscSequency;
+use cluEscSequency::EscSeqLen;
+use cluEscSequency::colors::Red;
+use cluEscSequency::back_colors::BackWhite;
+use cluEscSequency::heads::Bold;
+use cluEscSequency::heads::Flashing;
+use cluEscSequency::EscSeqWrite;
 use std::io;
 use std::io::Write;
 use std::fmt;
+use cluEscSequency::EscSeqReset;
 
-use cluColor::colors::Red;
-use cluColor::colors::BackWhite;
-use cluColor::heads::Bold;
-use cluColor::heads::Flashing;
-use cluColor::FontSeqLen;
-use cluColor::FontSeqReset;
-use cluColor::FontSeqEscape;
-use cluColor::FontSeqWrite;
-use cluExtIO::drop_write::DropWriteFlush;
 
-fontseg_table! {
-	TwoReset(FontSeqReset, FontSeqReset)
+escseq_table! {
+	TwoReset(EscSeqReset, EscSeqReset)
 	BoldFlashing(Flashing, Bold)
-	EmptyBoldFlashing(Flashing, Bold, FontSeqReset)
+	EmptyBoldFlashing(Flashing, Bold, EscSeqReset)
 	
 	TestOut(BackWhite, Red)
 	TestOut2(Red)
@@ -30,7 +29,10 @@ fn main() -> Result<(), IoOrFmtErr> {
 		let mut vec = Vec::with_capacity(12);
 		TwoReset::io_write(&mut vec).unwrap();
 		
-		assert_eq!(TwoReset::ALL_LEN, "\x1b[0;0m".len());
+		assert_eq!(TwoReset::ESC_DATA_LEN, "\x1b[0;0m".len());
+		assert_eq!(TwoReset::HEAD_DATA_LEN, "0;0".len());
+		
+		
 		assert_eq!(vec, b"\x1b[0;0m");
 		println!("{:?}", unsafe{ std::str::from_utf8_unchecked(&vec) });
 	}
@@ -39,7 +41,10 @@ fn main() -> Result<(), IoOrFmtErr> {
 		let mut vec = Vec::with_capacity(12);
 		BoldFlashing::io_write(&mut vec)?;
 		
-		assert_eq!(BoldFlashing::ALL_LEN, "\x1b[5;1m".len());
+		assert_eq!(BoldFlashing::ESC_DATA_LEN, "\x1b[5;1m".len());
+		assert_eq!(BoldFlashing::HEAD_DATA_LEN, "5;1".len());
+		
+		
 		assert_eq!(vec, b"\x1b[5;1m");
 		println!("{:?}", unsafe{ std::str::from_utf8_unchecked(&vec) });
 		
@@ -47,7 +52,6 @@ fn main() -> Result<(), IoOrFmtErr> {
 		let mut str = String::with_capacity(12);
 		BoldFlashing::fmt_write(&mut str)?;
 		
-		assert_eq!(BoldFlashing::ALL_LEN, "\x1b[5;1m".len());
 		assert_eq!(str, "\x1b[5;1m");
 		println!("{:?}", unsafe{ std::str::from_utf8_unchecked(&vec) });
 	}
@@ -56,7 +60,9 @@ fn main() -> Result<(), IoOrFmtErr> {
 		let mut vec = Vec::with_capacity(12);
 		EmptyBoldFlashing::io_write(&mut vec)?;
 		
-		assert_eq!(EmptyBoldFlashing::ALL_LEN, b"\x1b[5;1;0m".len());
+		assert_eq!(EmptyBoldFlashing::ESC_DATA_LEN, "\x1b[5;1;0m".len());
+		assert_eq!(EmptyBoldFlashing::HEAD_DATA_LEN, "5;1;0".len());
+		
 		assert_eq!(vec, b"\x1b[5;1;0m");
 		println!("{:?}", unsafe{ std::str::from_utf8_unchecked(&vec) });
 		
@@ -64,21 +70,23 @@ fn main() -> Result<(), IoOrFmtErr> {
 		let mut str = String::with_capacity(12);
 		EmptyBoldFlashing::fmt_write(&mut str)?;
 		
-		assert_eq!(EmptyBoldFlashing::ALL_LEN, "\x1b[5;1;0m".len());
 		assert_eq!(str, "\x1b[5;1;0m");
 		println!("{:?}", unsafe{ std::str::from_utf8_unchecked(&vec) });
 	}
 	
+	
+	//RUN
 	{
 		let stdout = std::io::stdout();
    		let mut handle = stdout.lock();
 		
 		{
-			let mut safe_out = FontSeqWrite::new(&mut handle as &mut std::io::Write);
+			let mut safe_out = EscSeqWrite::new(&mut handle as &mut std::io::Write);
 			safe_out.write::<TestOut>()?;
 			
 			write!(safe_out, "WhiteRed")?;
 		}
+		write!(handle, "\n")?;
 		handle.flush()?;
 	}
 	{
@@ -86,12 +94,12 @@ fn main() -> Result<(), IoOrFmtErr> {
    		let mut handle = stdout.lock();
 		
 		{
-			let mut safe_out = FontSeqWrite::new(&mut handle as &mut std::io::Write);
+			let mut safe_out = EscSeqWrite::new(&mut handle as &mut std::io::Write);
 			safe_out.write::<TestOut2>()?;
 			
 			write!(safe_out, "Red")?;
 		}
-		
+		write!(handle, "\n")?;
 		handle.flush()?;
 	}
 	
@@ -103,7 +111,7 @@ fn main() -> Result<(), IoOrFmtErr> {
 #[derive(Debug)]
 pub enum IoOrFmtErr {
 	IO(io::Error),
-	FMT(fmt::Error)	
+	FMT(fmt::Error)
 }
 
 impl From<io::Error> for IoOrFmtErr {

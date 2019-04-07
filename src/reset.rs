@@ -1,59 +1,54 @@
 
-use std::ops::DerefMut;
-use std::ops::Deref;
-use cluExtIO::generic::WriteStr;
-use crate::FontSeqEscape;
-use cluExtIO::phantom::PhantomWriteStr;
 
-fontseg_escape! {
-	pub enum FontSeqReset {
-		#len		[1]
-		#write	["0", b"0";]
-	}
+escseq_data! {
+	pub EscSeqReset = "0";
 }
 
 #[cfg(test)]
 mod tests {
-	use crate::FontSeqEscape;
-	use crate::FontSeqLen;
-	use crate::reset::FontSeqReset;
+	use crate::EscSequency;
+	use crate::EscSeqLen;
+	use crate::reset::EscSeqReset;
 	
 	#[test]
 	fn test_reset() {		
 		{
 			let mut vec = Vec::with_capacity(12);
-			FontSeqReset::io_write(&mut vec).unwrap();
+			EscSeqReset::io_write(&mut vec).unwrap();
 			
 			assert_eq!(vec, b"\x1b[0m");
 		}
 		
 		{
 			let mut vec = String::with_capacity(12);
-			FontSeqReset::fmt_write(&mut vec).unwrap();
+			EscSeqReset::fmt_write(&mut vec).unwrap();
 			
 			assert_eq!(vec, "\x1b[0m");
 		}
 		
 		{
 			let mut str = String::with_capacity(12);
-			FontSeqReset::clustr_write(&mut str).unwrap();
+			EscSeqReset::clustr_write(&mut str).unwrap();
 		
 			assert_eq!(str, "\x1b[0m");
 		}
 		
 		{
 			let mut vec = Vec::with_capacity(12);
-			FontSeqReset::clustr_write(&mut vec).unwrap();
+			EscSeqReset::clustr_write(&mut vec).unwrap();
 			
 			assert_eq!(vec, b"\x1b[0m");
 		}
 		
 		
-		assert_eq!(FontSeqReset::ELEMENT_DATA, "0");
-		assert_eq!(FontSeqReset::R_ELEMENT_DATA, b"0");
+		assert_eq!(EscSeqReset::ESC_DATA, "\x1b[0m");
+		assert_eq!(EscSeqReset::R_ESC_DATA, b"\x1b[0m");
 		
-		assert_eq!(FontSeqReset::LEN_ELEMENTS, 1);
-		assert_eq!(FontSeqReset::ELEMENT_LEN, "0".len());
-		assert_eq!(FontSeqReset::ALL_LEN, "\x1b[0m".len());
+		assert_eq!(EscSeqReset::HEAD_DATA, "0");
+		assert_eq!(EscSeqReset::R_HEAD_DATA, b"0");
+		
+		assert_eq!(EscSeqReset::HEAD_DATA_LEN, "0".len());
+		assert_eq!(EscSeqReset::ESC_DATA_LEN, "\x1b[0m".len());
+		
 	}	
 }
