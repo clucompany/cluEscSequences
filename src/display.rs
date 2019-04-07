@@ -8,11 +8,9 @@ use std::fmt;
 #[derive(Debug)]
 pub struct EscSeqDisplay<E>(PhantomData<E>) where E: EscSequency;
 
-impl<E> EscSeqDisplay<E> where E: EscSequency {
-	//ingore #![feature(const_fn)]...
-	
+impl<E> EscSeqDisplay<E> where E: EscSequency {	
 	#[inline(always)]
-	pub fn new() -> Self {
+	pub const fn new() -> Self {
 		EscSeqDisplay(PhantomData)	
 	}	
 }

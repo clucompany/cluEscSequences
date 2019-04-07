@@ -1,4 +1,4 @@
-
+#![feature(const_fn)]
 //Copyright 2019 #UlinProject Денис Котляров
 
 //Licensed under the Apache License, Version 2.0 (the "License");
