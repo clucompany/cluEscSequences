@@ -9,8 +9,10 @@ use std::fmt;
 pub struct EscSeqDisplay<E>(PhantomData<E>) where E: EscSequency;
 
 impl<E> EscSeqDisplay<E> where E: EscSequency {
+	//ingore #![feature(const_fn)]...
+	
 	#[inline(always)]
-	pub const fn new() -> Self {
+	pub fn new() -> Self {
 		EscSeqDisplay(PhantomData)	
 	}	
 }

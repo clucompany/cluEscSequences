@@ -11,8 +11,9 @@ use std::fmt;
 pub struct EscSeqWrite<T, OK, ERR>(T, PhantomWriteStr<OK, ERR>) where T: WriteStr<Ok=OK, Err=ERR>;
 
 impl<T, OK, ERR> EscSeqWrite<T, OK, ERR> where T: WriteStr<Ok=OK, Err=ERR> {
+	//IGNORE #![feature(const_fn)]
 	#[inline]
-	pub const fn new(a: T) -> Self {
+	pub fn new(a: T) -> Self {
 		EscSeqWrite(a, PhantomWriteStr::new())
 	}
 	

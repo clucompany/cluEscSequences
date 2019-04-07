@@ -1,6 +1,3 @@
-#![feature(const_fn)]
-#![feature(const_str_as_bytes)]
-#![feature(const_str_len)]
 
 //Copyright 2019 #UlinProject Денис Котляров
 
@@ -60,8 +57,17 @@ pub trait EscSequency {
 	const HEAD_DATA: &'static str;
 	//const STR_DATA: &'static str;
 	
-	const R_ESC_DATA: &'static [u8] = <Self as EscSequency>::ESC_DATA.as_bytes();
-	const R_HEAD_DATA: &'static [u8] = <Self as EscSequency>::HEAD_DATA.as_bytes();
+	const R_ESC_DATA: &'static [u8] = 
+		unsafe {
+			cluConstConcat::ignore_feature::const_str_as_bytes(
+				<Self as EscSequency>::ESC_DATA
+			)
+		};
+	const R_HEAD_DATA: &'static [u8] = unsafe {
+			cluConstConcat::ignore_feature::const_str_as_bytes(
+				<Self as EscSequency>::HEAD_DATA
+			)
+		};
 	//const R_STR_DATA: &'static [u8] = <Self as EscSequency>::STR_DATA.as_bytes();
 	
 	#[inline(always)]
@@ -157,8 +163,18 @@ ConstConcat::<A::RAW_U8Array_TYPE, B::RAW_U8Array_TYPE>
 */
 
 pub trait EscSeqLen: EscSequency {	
-	const HEAD_DATA_LEN: usize = <Self as EscSequency>::HEAD_DATA.len();
-	const ESC_DATA_LEN: usize = <Self as EscSequency>::ESC_DATA.len();
+	const HEAD_DATA_LEN: usize = 
+		unsafe {
+			cluConstConcat::ignore_feature::const_str_len(
+				<Self as EscSequency>::HEAD_DATA
+			)
+		};
+	const ESC_DATA_LEN: usize =
+		unsafe {
+			cluConstConcat::ignore_feature::const_str_len(
+				<Self as EscSequency>::ESC_DATA
+			)
+		};
 	
 	#[inline]
 	fn head_data_len() -> usize {
