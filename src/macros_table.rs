@@ -54,7 +54,7 @@ macro_rules! escseq_table {
 	
 	[impl $name:ident $( ( $a:ty $(, $b:ty)* ) [$($str:expr),*] )* ;$($tt:tt)*] => {
 		impl crate::EscSequency for $name {
-			cluConstConcat::const_data! {
+			cluConstData::const_data! {
 				const ESC_DATA: &'static str = 
 					$(
 						"\x1b[",
@@ -76,7 +76,7 @@ macro_rules! escseq_table {
 		}
 		
 		/*
-		//cluConstConcat::const_data! {
+		//cluConstData::const_data! {
 			//	const ESC_DATA: &'static str = "";
 				/*	"\x1b[",
 					$(
@@ -114,7 +114,7 @@ macro_rules! escseq_table {
 				<$a as crate::EscSeqLen>::ELEMENT_LEN 
 				
 				$(
-					+ unsafe { cluConstConcat::ignore_feature::const_str_len(";") } + 
+					+ unsafe { cluConstData::ignore_feature::const_str_len(";") } + 
 					<$b as crate::EscSeqLen>::ELEMENT_LEN
 				)*;
 				
@@ -122,13 +122,13 @@ macro_rules! escseq_table {
 				<$a as crate::EscSeqLen>::LEN_ELEMENTS 
 				
 				$(
-					+ unsafe { cluConstConcat::ignore_feature::const_str_len(";") } + 
+					+ unsafe { cluConstData::ignore_feature::const_str_len(";") } + 
 					<$b as crate::EscSeqLen>::LEN_ELEMENTS
 				)*;
 		}*/
 		
 		impl crate::EscSequency for $name {
-			cluConstConcat::const_data! {
+			cluConstData::const_data! {
 				const ESC_DATA: &'static str = "\x1b[",
 					<$name as crate::EscSequency>::HEAD_DATA,
 					"m";

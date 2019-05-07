@@ -1,6 +1,6 @@
 [package]
 name = "cluEscSequency"
-version = "0.2.5"
+version = "0.2.6"
 authors = ["Denis Kotlyarov (Денис Котляров) <denis2005991@gmail.com>"]
 repository = "https://github.com/clucompany/ColorGeneric.git"
 license = "Apache-2.0"
@@ -13,4 +13,4 @@ categories = ["development-tools"]
 
 [dependencies]
 cluExtIO = { git = "https://github.com/clucompany/cluExtIO" }
-cluConstConcat = "1.2.2"
+cluConstData = "1.2.2"

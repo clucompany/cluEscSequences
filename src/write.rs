@@ -48,7 +48,7 @@ impl<T, OK, ERR> DerefMut for EscSeqWrite<T, OK, ERR> where T: WriteStr<Ok=OK, E
 impl<T, OK, ERR> From<T> for EscSeqWrite<T, OK, ERR> where T: WriteStr<Ok=OK, Err=ERR> {
 	#[inline(always)]
 	fn from(a: T) -> Self {
-		Self::new(a)	
+		Self::new(a)
 	}
 }
 

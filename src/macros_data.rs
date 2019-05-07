@@ -45,7 +45,7 @@ macro_rules! escseq_data {
 	[impl $data:ident = $($str:expr),*;  $($tt:tt)*] => {
 		//"\x1b[", $str, "m"
 		impl $crate::EscSequency for $data {
-			cluConstConcat::const_data! {
+			cluConstData::const_data! {
 				const ESC_DATA: &'static str = "\x1b[", $($str),*, "m";
 				const HEAD_DATA: &'static str = $($str),*;
 				//const STR_DATA: &'static str = "";

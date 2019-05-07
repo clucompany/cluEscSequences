@@ -1,4 +1,3 @@
-#![feature(const_fn)]
 //Copyright 2019 #UlinProject Денис Котляров
 
 //Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,9 +22,13 @@
 
 */
 
-extern crate cluConstConcat;
+#![feature(const_fn)]
+#![allow(non_snake_case)]
+
+extern crate cluConstData;
 pub extern crate cluExtIO;
 
+use crate::data::EscSequencyData;
 use cluExtIO::generic::WriteStr;
 use std::io;
 use std::fmt;
@@ -45,6 +48,8 @@ pub mod heads;
 pub mod colors;
 pub mod back_colors;
 
+pub mod data;
+
 mod write;
 pub use self::write::*;
 
@@ -59,16 +64,21 @@ pub trait EscSequency {
 	
 	const R_ESC_DATA: &'static [u8] = 
 		unsafe {
-			cluConstConcat::ignore_feature::const_str_as_bytes(
+			cluConstData::ignore_feature::const_str_as_bytes(
 				<Self as EscSequency>::ESC_DATA
 			)
 		};
 	const R_HEAD_DATA: &'static [u8] = unsafe {
-			cluConstConcat::ignore_feature::const_str_as_bytes(
+			cluConstData::ignore_feature::const_str_as_bytes(
 				<Self as EscSequency>::HEAD_DATA
 			)
 		};
 	//const R_STR_DATA: &'static [u8] = <Self as EscSequency>::STR_DATA.as_bytes();
+	
+	#[inline(always)]
+	fn data() -> EscSequencyData<Self> where Self: Sized {
+		EscSequencyData::<Self>::new()
+	}
 	
 	#[inline(always)]
 	fn display() -> EscSeqDisplay<Self> where Self : Sized {
@@ -120,7 +130,7 @@ impl<A, T> EscSequency for (A, T) where A: EscSequency, T: EscSequency {
 	
 	const DATA: &'static str = T::DATA;
 	const RAW_DATA: &'static [u8] = 
-		&cluConstConcat::const_concat!(u8: <A as EscSequency>::RAW_DATA, b"2");
+		&cluConstData::const_concat!(u8: <A as EscSequency>::RAW_DATA, b"2");
 }*/
 /*
 pub trait EscSequency: EscSeqLen
@@ -165,13 +175,13 @@ ConstConcat::<A::RAW_U8Array_TYPE, B::RAW_U8Array_TYPE>
 pub trait EscSeqLen: EscSequency {	
 	const HEAD_DATA_LEN: usize = 
 		unsafe {
-			cluConstConcat::ignore_feature::const_str_len(
+			cluConstData::ignore_feature::const_str_len(
 				<Self as EscSequency>::HEAD_DATA
 			)
 		};
 	const ESC_DATA_LEN: usize =
 		unsafe {
-			cluConstConcat::ignore_feature::const_str_len(
+			cluConstData::ignore_feature::const_str_len(
 				<Self as EscSequency>::ESC_DATA
 			)
 		};
