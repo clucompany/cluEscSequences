@@ -13,4 +13,4 @@ categories = ["development-tools"]
 
 [dependencies]
 cluExtIO = { git = "https://github.com/clucompany/cluExtIO" }
-cluConstData = "1.2.2"
+cluConstData = "1.2.3"
