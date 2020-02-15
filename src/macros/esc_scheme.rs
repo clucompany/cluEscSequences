@@ -2,12 +2,12 @@
 
 
 #[macro_export]
-macro_rules! escseq_table {
+macro_rules! escseq_scheme {
 	//NO STR
 	[pub $name:ident ($($t:tt)*)  $($tt:tt)*] => {
 		pub enum $name {}
 		
-		$crate::escseq_table! {
+		$crate::escseq_scheme! {
 			impl $name ($($t)*)
 			
 			$($tt)* 
@@ -17,7 +17,7 @@ macro_rules! escseq_table {
 	[$name:ident ($($t:tt)*)  $($tt:tt)*] => {
 		enum $name {}
 		
-		$crate::escseq_table! {
+		$crate::escseq_scheme! {
 			impl $name ($($t)*)
 			
 			$($tt)* 
@@ -29,7 +29,7 @@ macro_rules! escseq_table {
 	[pub $name:ident	$( ($($t:tt)*)[$($str:expr),*] )*  ;$($tt:tt)*] => {
 		pub enum $name {}
 		
-		$crate::escseq_table! {
+		$crate::escseq_scheme! {
 			impl $name $(	($($t)*)[$($str),*]	)* ;
 			
 			$($tt)* 
@@ -39,7 +39,7 @@ macro_rules! escseq_table {
 	[$name:ident	$( ($($t:tt)*)[$($str:expr),*] )*  ;$($tt:tt)*] => {
 		enum $name {}
 		
-		$crate::escseq_table! {
+		$crate::escseq_scheme! {
 			impl $name $(	($($t)*)[$($str),*]	)* ;
 			
 			$($tt)* 
@@ -53,15 +53,15 @@ macro_rules! escseq_table {
 	
 	
 	[impl $name:ident $( ( $a:ty $(, $b:ty)* ) [$($str:expr),*] )* ;$($tt:tt)*] => {
-		impl crate::EscSequency for $name {
+		impl crate::EscSequence for $name {
 			cluConstData::const_data! {
 				const ESC_DATA: &'static str = 
 					$(
 						"\x1b[",
 						
-						<$a as crate::EscSequency>::HEAD_DATA
+						<$a as crate::EscSequence>::HEAD_DATA
 						
-						$(, ";", <$b as crate::EscSequency>::HEAD_DATA)*
+						$(, ";", <$b as crate::EscSequence>::HEAD_DATA)*
 						
 						, "m" $(, $str)*
 						,
@@ -80,9 +80,9 @@ macro_rules! escseq_table {
 			//	const ESC_DATA: &'static str = "";
 				/*	"\x1b[",
 					$(
-						<$a as crate::EscSequency>::ELEMENT_DATA
+						<$a as crate::EscSequence>::ELEMENT_DATA
 						
-						$(, ";", <$b as crate::EscSequency>::ELEMENT_DATA)*
+						$(, ";", <$b as crate::EscSequence>::ELEMENT_DATA)*
 						
 						, "m" $(, $str)* 
 						
@@ -91,65 +91,65 @@ macro_rules! escseq_table {
 				*/
 				
 				//const ELEMENT_DATA: &'static str = "";
-					/*<$a as crate::EscSequency>::ELEMENT_DATA
-					$(,";", <$b as crate::EscSequency>::ELEMENT_DATA)**/;
+					/*<$a as crate::EscSequence>::ELEMENT_DATA
+					$(,";", <$b as crate::EscSequence>::ELEMENT_DATA)**/;
 					
-				/*	<$a as crate::EscSequency>::ELEMENT_DATA
-					$(,";", <$b as crate::EscSequency>::ELEMENT_DATA)*;*/
+				/*	<$a as crate::EscSequence>::ELEMENT_DATA
+					$(,";", <$b as crate::EscSequence>::ELEMENT_DATA)*;*/
 					
 				/*const R_ELEMENT_DATA: &'static [u8] =
-					<$a as crate::EscSequency>::R_ELEMENT_DATA
-					$(,b";", <$b as crate::EscSequency>::R_ELEMENT_DATA)*;*/
+					<$a as crate::EscSequence>::R_ELEMENT_DATA
+					$(,b";", <$b as crate::EscSequence>::R_ELEMENT_DATA)*;*/
 			//}*/
 		
-		$crate::escseq_table!{ $($tt)* }
+		$crate::escseq_scheme!{ $($tt)* }
 	};
 	
 	
 	
 	
 	[impl $name:ident ($a:ty $(, $b:ty)*)  $($tt:tt)*] => {
-		/*impl crate::EscSeqLen for $name {
+		/*impl crate::EscLenSeq for $name {
 			const ELEMENT_LEN: usize = 
-				<$a as crate::EscSeqLen>::ELEMENT_LEN 
+				<$a as crate::EscLenSeq>::ELEMENT_LEN 
 				
 				$(
 					+ unsafe { cluConstData::ignore_feature::const_str_len(";") } + 
-					<$b as crate::EscSeqLen>::ELEMENT_LEN
+					<$b as crate::EscLenSeq>::ELEMENT_LEN
 				)*;
 				
 			const LEN_ELEMENTS: usize = 
-				<$a as crate::EscSeqLen>::LEN_ELEMENTS 
+				<$a as crate::EscLenSeq>::LEN_ELEMENTS 
 				
 				$(
 					+ unsafe { cluConstData::ignore_feature::const_str_len(";") } + 
-					<$b as crate::EscSeqLen>::LEN_ELEMENTS
+					<$b as crate::EscLenSeq>::LEN_ELEMENTS
 				)*;
 		}*/
 		
-		impl crate::EscSequency for $name {
-			cluConstData::const_data! {
+		impl crate::EscSeq for $name {
+			$crate::cluConstData::const_data! {
 				const ESC_DATA: &'static str = "\x1b[",
-					<$name as crate::EscSequency>::HEAD_DATA,
+					<$a as crate::EscSeq>::HEAD_DATA,
 					"m";
 				
 				//const STR_DATA: &'static str = "";
 				
 				/*const R_ESC_DATA: &'static [u8] = b"\x1b[",
-					<$name as crate::EscSequency>::R_ELEMENT_DATA,
+					<$name as crate::EscSequence>::R_ELEMENT_DATA,
 					b"m";*/
 				
 				const HEAD_DATA: &'static str =
-					<$a as crate::EscSequency>::HEAD_DATA
-					$(,";", <$b as crate::EscSequency>::HEAD_DATA)*;
+					<$a as crate::EscSeq>::HEAD_DATA
+					$(,";", <$b as crate::EscSeq>::HEAD_DATA)*;
 					
 				/*const R_ELEMENT_DATA: &'static [u8] =
-					<$a as crate::EscSequency>::R_ELEMENT_DATA
-					$(,b";", <$b as crate::EscSequency>::R_ELEMENT_DATA)*;*/
+					<$a as crate::EscSequence>::R_ELEMENT_DATA
+					$(,b";", <$b as crate::EscSequence>::R_ELEMENT_DATA)*;*/
 			}
 		}
 		
-		$crate::escseq_table!{ $($tt)* }
+		$crate::escseq_scheme!{ $($tt)* }
 	};
 	
 	() => ()

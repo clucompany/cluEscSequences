@@ -1,9 +1,16 @@
 
-extern crate cluEscSequency;
+extern crate cluEscSequence;
 
-use cluEscSequency::EscSequency;
-use cluEscSequency::colors::Blue;
+use cluEscSequence::EscSequence;
+use cluEscSequence::colors::Blue;
 use std::io;
+
+
+
+
+pub struct MyWriter {
+	
+}
 
 fn main() -> Result<(), io::Error> {
 	let color_data = Blue::data();

@@ -1,9 +1,9 @@
-# cluEscSequency
+# cluEscSequence
 
-[![Build Status](https://travis-ci.org/clucompany/cluEscSequency.svg?branch=master)](https://travis-ci.org/clucompany/cluEscSequency)
+[![Build Status](https://travis-ci.org/clucompany/cluEscSequence.svg?branch=master)](https://travis-ci.org/clucompany/cluEscSequence)
 [![Apache licensed](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](./LICENSE)
-[![crates.io](http://meritbadge.herokuapp.com/cluEscSequency)](https://crates.io/crates/cluEscSequency)
-[![Documentation](https://docs.rs/cluEscSequency/badge.svg)](https://docs.rs/cluEscSequency)
+[![crates.io](http://meritbadge.herokuapp.com/cluEscSequence)](https://crates.io/crates/cluEscSequence)
+[![Documentation](https://docs.rs/cluEscSequence/badge.svg)](https://docs.rs/cluEscSequence)
 
 
 # License

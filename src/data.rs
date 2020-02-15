@@ -1,99 +1,113 @@
 
-use std::fmt::Display;
-use std::fmt::Formatter;
-use crate::write::EscSeqWrite;
-use cluExtIO::generic::WriteStr;
-use crate::display::EscSeqDisplay;
-use std::marker::PhantomData;
-use crate::EscSequency;
-use crate::reset::EscSeqReset;
-use std::io;
-use std::io::Write;
-use std::fmt;
+use crate::static_element::r#static::EscElementSeq;
+use crate::runtime_element::EscRunElementSeq;
 
-#[derive(Debug)]
-pub struct EscSequencyData<T> where T: EscSequency {
-	_p: PhantomData<T>,
-}
-
-impl<T> Clone for EscSequencyData<T> where T: EscSequency {
-	#[inline(always)]
-	fn clone(&self) -> Self {
-		Self::new()
+pub trait EscSeqData {
+	const ESC_DATA: &'static str;
+	const HEAD_DATA: &'static str;
+	
+	fn new() -> EscElementSeq<Self> where Self: std::marker::Sized  {
+		EscElementSeq::new()
 	}
-}
-
-impl<T> EscSequencyData<T> where T: EscSequency {
+	
 	#[inline]
-	pub const fn new() -> Self {
-		Self {
-			_p: PhantomData,
-		}
+	fn new_runtime() -> EscRunElementSeq where Self: std::marker::Sized {
+		EscRunElementSeq::new::<Self>()
 	}
 	
-	#[inline(always)]
-	pub const fn display(&self) -> EscSeqDisplay<T> {
-		EscSeqDisplay::<T>::new()
+	#[inline]
+	fn esc_data() -> &'static str {
+		Self::ESC_DATA
 	}
 	
-	#[inline(always)]
-	pub const fn writer<W: WriteStr<Ok=OK, Err=ERR>, OK, ERR>(&self, write: W) -> EscSeqWrite<W, OK, ERR> {
-		EscSeqWrite::new(write)
+	#[inline]
+	fn as_esc_data(&self) -> &'static str {
+		Self::ESC_DATA
 	}
 	
-	
-	#[inline(always)]
-	pub fn head_io_write<W: io::Write>(&self, w: W) -> Result<usize, io::Error> {
-		T::head_io_write(w)
-	}
-		
-	#[inline(always)]
-	pub fn head_fmt_io_write<W: fmt::Write>(&self, w: W) -> Result<(), fmt::Error> {
-		T::head_fmt_io_write(w)
-	}
-		
-	#[inline(always)]
-	pub fn head_clustr_write<W: WriteStr<Ok=TOK, Err=TERR>, TOK, TERR>(&self, w: W) -> Result<W::Ok, W::Err> {
-		T::head_clustr_write(w)
+	#[inline]
+	fn head_data() -> &'static str {
+		Self::HEAD_DATA
 	}
 	
-	#[inline(always)]
-	pub fn io_write<W: io::Write>(&self, w: W) -> Result<usize, io::Error> {
-		T::io_write(w)
-	}
-	
-	#[inline(always)]
-	pub fn fmt_write<W: fmt::Write>(&self, w: W) -> Result<(), fmt::Error> {
-		T::fmt_write(w)
-	}
-	
-	#[inline(always)]
-	pub fn clustr_write<W: WriteStr<Ok=TOK, Err=TERR>, TOK, TERR>(&self, w: W) -> Result<W::Ok, W::Err> {
-		T::clustr_write(w)
-	}
-	
-	#[inline(always)]
-	pub fn reset<W: WriteStr<Ok=OK, Err=ERR>, OK, ERR>(&self, w: W) -> Result<OK, ERR> {
-		EscSeqReset::clustr_write(w)
-	}
-	
-	
-	pub fn reset_println(&self) -> Result<usize, io::Error> {
-		std::io::stdout().write(EscSeqReset::R_ESC_DATA)
+	#[inline]
+	fn as_head_data(&self) -> &'static str {
+		Self::HEAD_DATA
 	}
 }
 
-impl<T> From<()> for EscSequencyData<T> where T: EscSequency {
-	#[inline(always)]
-	fn from(_a: ()) -> Self {
-		Self::new()
+impl<'a, T> EscSeqData for &'a T where T: EscSeqData {
+	const ESC_DATA: &'static str = T::ESC_DATA;
+	const HEAD_DATA: &'static str = T::HEAD_DATA;
+	
+	#[inline]
+	fn esc_data() -> &'static str {
+		T::ESC_DATA
+	}
+	
+	#[inline]
+	fn as_esc_data(&self) -> &'static str {
+		T::ESC_DATA
+	}
+	
+	#[inline]
+	fn head_data() -> &'static str {
+		T::HEAD_DATA
+	}
+	
+	#[inline]
+	fn as_head_data(&self) -> &'static str {
+		T::HEAD_DATA
 	}
 }
 
-impl<T> Display for EscSequencyData<T> where T: EscSequency {
-	#[inline(always)]
-	fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
-		f.write_str(T::ESC_DATA)
+
+pub trait EsqSeqLenData {
+	const HEAD_DATA_LEN: usize;
+	const ESC_DATA_LEN: usize;
+	
+	#[inline]
+	fn head_data_len() -> usize {
+		Self::HEAD_DATA_LEN
+	}
+	
+	#[inline]
+	fn esc_data_len() -> usize {
+		Self::ESC_DATA_LEN
+	}
+	
+	#[inline]
+	fn as_head_data_len(&self) -> usize {
+		Self::HEAD_DATA_LEN
+	}
+	
+	#[inline]
+	fn as_esc_data_len(&self) -> usize {
+		Self::ESC_DATA_LEN
 	}
 }
 
+impl<T> EsqSeqLenData for T where T: EscSeqData {
+	const HEAD_DATA_LEN: usize = T::HEAD_DATA.len();
+	const ESC_DATA_LEN: usize = T::ESC_DATA.len();
+	
+	#[inline]
+	fn head_data_len() -> usize {
+		Self::HEAD_DATA_LEN
+	}
+	
+	#[inline]
+	fn esc_data_len() -> usize {
+		Self::ESC_DATA_LEN
+	}
+	
+	#[inline]
+	fn as_head_data_len(&self) -> usize {
+		Self::HEAD_DATA_LEN
+	}
+	
+	#[inline]
+	fn as_esc_data_len(&self) -> usize {
+		Self::ESC_DATA_LEN
+	}
+}

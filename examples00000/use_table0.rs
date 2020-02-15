@@ -1,21 +1,21 @@
 
 #[macro_use]
-extern crate cluEscSequency;
+extern crate cluEscSequence;
 
-use cluEscSequency::EscSequency;
-use cluEscSequency::EscSeqLen;
-use cluEscSequency::colors::Red;
-use cluEscSequency::back_colors::BackWhite;
-use cluEscSequency::heads::Bold;
-use cluEscSequency::heads::Flashing;
-use cluEscSequency::EscSeqWrite;
+use cluEscSequence::EscSequence;
+use cluEscSequence::EscLenSeq;
+use cluEscSequence::colors::Red;
+use cluEscSequence::back_colors::BackWhite;
+use cluEscSequence::heads::Bold;
+use cluEscSequence::heads::Flashing;
+use cluEscSequence::EscSeqWrite;
 use std::io;
 use std::io::Write;
 use std::fmt;
-use cluEscSequency::EscSeqReset;
+use cluEscSequence::EscSeqReset;
 
 
-escseq_table! {
+escseq_scheme! {
 	TwoReset(EscSeqReset, EscSeqReset)
 	BoldFlashing(Flashing, Bold)
 	EmptyBoldFlashing(Flashing, Bold, EscSeqReset)
